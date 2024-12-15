@@ -3,17 +3,24 @@
 set -e
 
 # AMI ID from previous steps
-AMI_ID="ami-0420c4f1a6fb6722f"
-PRODUCT_ID="prod-j7n25c6yvugho"
-REGION="us-east-1"
-ROLE_ARN="arn:aws:iam::541396506541:role/AccessAmiFromMarketplace"
-
-if [ -z "$1" ]; then
-  echo "Error: Release version must be provided as first argument"
+# AMI_ID="ami-0420c4f1a6fb6722f"
+if [ -z "$AMI_ID" ]; then
+  echo "Error: AMI_ID environment variable is not set"
   exit 1
 fi
-
-RELEASE="$1"
+if [ -z "$PRODUCT_ID" ]; then
+  echo "Error: PRODUCT_ID environment variable is not set"
+  exit 1
+fi
+if [ -z "$ROLE_ARN" ]; then
+  echo "Error: ROLE_ARN environment variable is not set"
+  exit 1
+fi
+if [ -z "$RELEASE" ]; then
+  echo "Error: RELEASE environment variable is not set"
+  exit 1
+fi
+REGION="us-east-1"
 
 change_set=$(cat <<EOF
 {
@@ -68,19 +75,3 @@ aws marketplace-catalog start-change-set \
     --query 'ChangeSetId' \
     --region "$REGION" \
     --output json
-
-
-
-# Submit the change set
-# change_set_id=$(aws marketplace-catalog start-change-set \
-#     --cli-input-json "$change_set" \
-#     --query 'ChangeSetId' \
-#     --output text)
-
-# # Wait for change set to complete
-# aws marketplace-catalog wait change-set-complete \
-#     --change-set-id "$change_set_id"
-
-# # Describe the change set to confirm
-# aws marketplace-catalog describe-change-set \
-#     --change-set-id "$change_set_id"

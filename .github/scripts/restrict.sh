@@ -2,7 +2,11 @@
 
 set -e
 
-PRODUCT_ID="prod-j7n25c6yvugho"
+if [ -z "$PRODUCT_ID" ]; then
+  echo "Error: PRODUCT_ID environment variable is not set"
+  exit 1
+fi
+
 REGION="us-east-1"
 
 entity_details=$(aws marketplace-catalog describe-entity \
